@@ -2,22 +2,18 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ObjectID,
-  PrimaryColumn,
-  ObjectIdColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from "typeorm";
 
 @Entity()
 export class User {
-  // @ObjectIdColumn()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
   email: string;
-
-  @Column("boolean", { default: false })
-  isAdmin: boolean;
 
   @Column({ default: "" })
   firstName: string;
@@ -25,21 +21,24 @@ export class User {
   @Column({ default: "" })
   LastName: string;
 
+  @Column("boolean", { default: false })
+  isAdmin: boolean;
+
   @Column()
   salt: string;
 
   @Column()
   password: string;
 
-  @Column({ default: `${new Date()}` })
+  @CreateDateColumn()
   created_at: string;
+
+  @UpdateDateColumn()
+  updated_at: string;
 
   @Column("boolean", { default: false })
   isDeleted: boolean;
 
-  @Column({ default: "" })
+  @DeleteDateColumn()
   deleted_at: string;
-}
-function ObjectIDColumn() {
-  throw new Error("Function not implemented.");
 }

@@ -1,7 +1,7 @@
 import { logger } from "../logger/logger.js";
 import { AppDataSource } from "./data-source.ts.js";
 
-export const dbInit = async () => {
+export const dbInit = async (): Promise<void> => {
   try {
     await AppDataSource.initialize();
     logger.info("connected to database...");
