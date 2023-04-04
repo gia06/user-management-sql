@@ -1,7 +1,7 @@
 import { AppDataSource } from "../db/data-source.ts.js";
 import { User } from "../db/entity.js";
 import { logger } from "../logger/logger.js";
-import { UserType } from "../types/user.js";
+import { RequestBody, UserType } from "../types/user.js";
 import { hashPassword } from "../utils/passwordHash.js";
 
 export const getUsers = async (): Promise<UserType[]> => {
@@ -22,12 +22,20 @@ export const findById = async (id: string): Promise<UserType> => {
   return user;
 };
 
-export const createUser = async (userObject): Promise<void> => {
-  const { hash, salt } = await hashPassword(userObject.password);
+export const findByEmail = async (email: string) => {
+  return await AppDataSource.getRepository(User).findOneBy({ email });
+};
 
-  userObject.password = hash;
-  userObject.salt = salt;
+export const createUser = async ({
+  email,
+  password,
+}: RequestBody): Promise<void> => {
+  const user = new User();
+  const { hash, salt } = await hashPassword(password);
 
-  const user = AppDataSource.getRepository(User).create(userObject);
-  await AppDataSource.getRepository(User).save(user);
+  user.email = email;
+  user.password = hash;
+  user.salt = salt;
+
+  await AppDataSource.manager.save(user);
 };

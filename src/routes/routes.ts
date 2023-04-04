@@ -6,7 +6,10 @@ import {
   getUserByIdController,
   getUsersController,
 } from "../controllers/users.controller.js";
-import { hashPassword } from "../utils/passwordHash.js";
+import {
+  checkExistenceByEmail,
+  checkExistenceByID,
+} from "../middleware/checkExistence.js";
 
 export const router = express.Router();
 
@@ -16,11 +19,6 @@ router.use("/swagger", swaggerUI.serve, swaggerUI.setup(swaggerJsDoc));
 
 router.get("/users", getUsersController);
 
-router.get("/users/:id", getUserByIdController);
+router.get("/users/:id", checkExistenceByID, getUserByIdController);
 
-router.get("/test", async (req, res) => {
-  const { hash } = await hashPassword("hashthis");
-  console.log(hash);
-});
-
-router.post("/user", createUserController);
+router.post("/user", checkExistenceByEmail, createUserController);

@@ -11,3 +11,8 @@ export interface UserType {
   isDeleted: boolean;
   deleted_at: null | string;
 }
+
+export interface RequestBody {
+  email: string;
+  password: string;
+}
