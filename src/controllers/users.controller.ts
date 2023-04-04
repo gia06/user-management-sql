@@ -8,14 +8,10 @@ export const getUsersController = async (req: Request, res: Response) => {
 };
 
 export const getUserByIdController = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  logger.info(`id: ${id}`);
-  const user = await findById(id);
-  res.status(200).json(user);
+  res.status(200).json(res.locals.user);
 };
 
 export const createUserController = async (req: Request, res: Response) => {
-  logger.info(req.body, "body");
   const user = await createUser(req.body);
   res.status(201).json(user);
 };

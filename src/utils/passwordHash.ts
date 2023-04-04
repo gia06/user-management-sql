@@ -14,6 +14,7 @@ export const hashPassword = (password: string): Promise<Hash> => {
 
       const hash = derivedKey.toString("hex");
 
+      logger.info({ hash, salt }, "hash result");
       resolve({ hash, salt });
     });
   });
