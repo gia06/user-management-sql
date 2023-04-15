@@ -2,7 +2,7 @@ export interface UserType {
   id: string;
   email: string;
   firstName: string;
-  LastName: string;
+  lastName: string;
   isAdmin: boolean;
   salt: string;
   password: string;
@@ -10,9 +10,4 @@ export interface UserType {
   updated_at: string;
   isDeleted: boolean;
   deleted_at: null | string;
-}
-
-export interface RequestBody {
-  email: string;
-  password: string;
 }

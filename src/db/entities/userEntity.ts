@@ -19,7 +19,7 @@ export class User {
   firstName: string;
 
   @Column({ default: "" })
-  LastName: string;
+  lastName: string;
 
   @Column("boolean", { default: false })
   isAdmin: boolean;
