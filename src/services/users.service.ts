@@ -1,10 +1,11 @@
 import { AppDataSource } from "../db/data-source.ts.js";
-import { User } from "../db/entities/userEntity.js";
+import { User } from "../db/entities/user.entity.js";
 import { logger } from "../logger/logger.js";
-import { LoginBody, RegisterBody } from "../types/requestBody.js";
-import { LoginResult } from "../types/service.js";
-import { UserType } from "../types/user.js";
+import { LoginBody, RegisterBody } from "../types/requestBody.type.js";
+import { LoginResult } from "../types/service.type.js";
+import { UserType } from "../types/user.type.js";
 import { hashPassword } from "../utils/passwordHash.js";
+import { findBookmarkById } from "./bookmark.service.js";
 
 export const getUsers = async (): Promise<UserType[]> => {
   const users: UserType[] = await AppDataSource.getRepository(User).find();
@@ -12,9 +13,10 @@ export const getUsers = async (): Promise<UserType[]> => {
   return users;
 };
 
-export const findUserById = async (id: string): Promise<UserType | null> => {
-  const user: UserType = await AppDataSource.getRepository(User).findOneBy({
-    id,
+export const findUserById = async (id: string): Promise<User> => {
+  const user: User = await AppDataSource.getRepository(User).findOne({
+    where: { id },
+    relations: ["bookmarks"],
   });
   return user;
 };
@@ -44,21 +46,46 @@ export const createUser = async ({
   return user;
 };
 
-//TODO : need updating after login route
-export const updateUser = async (id: string, requestBody): Promise<void> => {
-  const user = await AppDataSource.getRepository(User).findOneBy({ id });
-  AppDataSource.getRepository(User).merge(user, requestBody);
-  await AppDataSource.getRepository(User).save(user);
+export const addBookmark = async (
+  userId: string,
+  bookmarkId: string
+): Promise<void> => {
+  const userRepository = AppDataSource.getRepository(User);
+  const storedUser = await findUserById(userId);
+  const storedBookmark = await findBookmarkById(bookmarkId);
+
+  storedUser.bookmarks.push(storedBookmark);
+
+  await userRepository.save(storedUser);
+
+  console.log(storedUser, storedBookmark);
 };
 
-export const loginService = async ({
+export const removeBookmark = async (
+  userId: string,
+  bookmarkId: string
+): Promise<void> => {
+  const userRepository = AppDataSource.getRepository(User);
+  const storedUser = await findUserById(userId);
+  const storedBookmark = await findBookmarkById(bookmarkId);
+
+  storedUser.bookmarks = storedUser.bookmarks.filter(
+    (bookmark) => bookmark.id !== storedBookmark.id
+  );
+
+  await userRepository.save(storedUser);
+};
+
+export const authService = async ({
   email,
   password,
 }: LoginBody): Promise<LoginResult> => {
   const user = await findUserByEmail(email);
   const { hash } = await hashPassword(password, user.salt);
-  console.log(hash, user.password);
 
   if (hash !== user.password) return { isAuthenticated: false };
+
   return { isAuthenticated: true };
 };
+
+const loginService = () => {};

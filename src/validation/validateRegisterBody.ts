@@ -8,15 +8,8 @@ const emailValidator: CustomValidator = async (email: string) => {
   }
 };
 
-export const validateRegisterBody = () => {
-  const validateEmail = body("email").isEmail().custom(emailValidator);
+export const validateEmail = body("email").isEmail().custom(emailValidator);
 
-  const validatePassword = body("password")
-    .isLength({ min: 5 })
-    .withMessage("must be at least 5 chars long");
-
-  return {
-    validateEmail,
-    validatePassword,
-  };
-};
+export const validatePassword = body("password")
+  .isLength({ min: 5 })
+  .withMessage("must be at least 5 chars long");

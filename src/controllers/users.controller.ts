@@ -3,9 +3,11 @@ import {
   createUser,
   findUserById,
   getUsers,
-  loginService,
-  updateUser,
+  // loginService,
+  addBookmark,
+  removeBookmark,
 } from "../services/users.service.js";
+import { signJwt } from "../utils/jwt.js";
 
 export const getUsersController = async (req: Request, res: Response) => {
   const users = await getUsers();
@@ -23,14 +25,21 @@ export const createUserController = async (req: Request, res: Response) => {
 };
 
 //TODO : need updating after login route
-export const partialUpdateController = async (req: Request, res: Response) => {
-  await updateUser(req.params.id, req.body);
+export const addBookmarkController = async (req: Request, res: Response) => {
+  const { userId, bookmarkId } = req.query;
+  await addBookmark(userId.toString(), bookmarkId.toString());
+  res.send("updated");
+};
+
+export const removeBookmarkController = async (req: Request, res: Response) => {
+  const { userId, bookmarkId } = req.query;
+  await removeBookmark(userId.toString(), bookmarkId.toString());
   res.send("updated");
 };
 
 // TODO : needs to be completed
 export const loginController = async (req: Request, res: Response) => {
-  const result = await loginService(req.body);
-  console.log(result);
+  // const { isAuthenticated } = await loginService(req.body);
+  // signJwt();
   // await loginService();
 };
