@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { logger } from "../logger/logger.js";
-import { AuthHash, Hash } from "../types/hash.js";
+import { AuthHash, Hash } from "../types/hash.type.js";
 
 export const hashPassword = (
   password: string,

@@ -4,11 +4,19 @@ import {
   getUserByIdController,
   getUsersController,
   loginController,
-  partialUpdateController,
+  addBookmarkController,
+  removeBookmarkController,
 } from "../controllers/users.controller.js";
-import { validateRegisterBody } from "../validation/validateRegisterBody.js";
+import {
+  validateEmail,
+  validatePassword,
+} from "../validation/validateRegisterBody.js";
 import { checkValidation } from "../validation/checkValidation.js";
 import { validateId } from "../validation/validateId.js";
+import {
+  validateUserId,
+  validateBookmarkId,
+} from "../validation/validateQuery.js";
 
 export const userRouter = express.Router();
 
@@ -22,14 +30,28 @@ userRouter.get(
 );
 
 userRouter.post(
-  "/user",
-  validateRegisterBody().validateEmail,
-  validateRegisterBody().validatePassword,
+  "/users",
+  validateEmail,
+  validatePassword,
   checkValidation,
   createUserController
 );
 
 //TODO : need updating after login route
-userRouter.put("/users/:id", partialUpdateController);
+userRouter.patch(
+  "/users/add-bookmark",
+  validateUserId,
+  validateBookmarkId,
+  checkValidation,
+  addBookmarkController
+);
+
+userRouter.patch(
+  "/users/remove-bookmark",
+  validateUserId,
+  validateBookmarkId,
+  checkValidation,
+  removeBookmarkController
+);
 
 userRouter.post("/login", loginController);
