@@ -49,7 +49,6 @@ export const removeBookmarkController = async (req: Request, res: Response) => {
 };
 
 export const loginController = async (req: Request, res: Response) => {
-  console.log("controller", res.locals.user);
   const { user } = res.locals;
   const { id, isAdmin } = user;
 
