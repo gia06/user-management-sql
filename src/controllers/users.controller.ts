@@ -3,11 +3,12 @@ import {
   createUser,
   findUserById,
   getUsers,
-  // loginService,
+  loginService,
   addBookmark,
   removeBookmark,
 } from "../services/users.service.js";
 import { signJwt } from "../utils/jwt.js";
+import { logger } from "../logger/logger.js";
 
 export const getUsersController = async (req: Request, res: Response) => {
   const users = await getUsers();
@@ -24,22 +25,35 @@ export const createUserController = async (req: Request, res: Response) => {
   res.status(201).json(user);
 };
 
-//TODO : need updating after login route
 export const addBookmarkController = async (req: Request, res: Response) => {
   const { userId, bookmarkId } = req.query;
   await addBookmark(userId.toString(), bookmarkId.toString());
-  res.send("updated");
+  res.sendStatus;
 };
 
 export const removeBookmarkController = async (req: Request, res: Response) => {
   const { userId, bookmarkId } = req.query;
-  await removeBookmark(userId.toString(), bookmarkId.toString());
-  res.send("updated");
+  try {
+    await removeBookmark(userId.toString(), bookmarkId.toString());
+    res.sendStatus(204);
+  } catch (err) {
+    logger.error(err.message);
+    res.status(500).json({
+      error: {
+        message: "Failed to update item in database.",
+        details:
+          "There was an error while attempting to store the item in the database. Please try again later.",
+      },
+    });
+  }
 };
 
-// TODO : needs to be completed
 export const loginController = async (req: Request, res: Response) => {
-  // const { isAuthenticated } = await loginService(req.body);
-  // signJwt();
-  // await loginService();
+  console.log("controller", res.locals.user);
+  const { user } = res.locals;
+  const { id, isAdmin } = user;
+
+  const token = await signJwt({ id, isAdmin });
+
+  res.status(200).json({ message: "Login successful", token });
 };
