@@ -8,15 +8,20 @@ import {
   removeBookmarkController,
 } from "../controllers/users.controller.js";
 import {
-  validateEmail,
-  validatePassword,
-} from "../validation/validateRegisterBody.js";
-import { checkValidation } from "../validation/checkValidation.js";
-import { validateId } from "../validation/validateId.js";
+  validateRegisterEmail,
+  validateRegisterPassword,
+} from "../middleware/validation/validateRegisterBody.js";
+import { checkValidation } from "../middleware/validation/checkValidation.js";
+import { validateId } from "../middleware/validation/validateId.js";
 import {
   validateUserId,
   validateBookmarkId,
-} from "../validation/validateQuery.js";
+} from "../middleware/validation/validateQuery.js";
+import {
+  validateLoginEmail,
+  validateLoginPassword,
+} from "../middleware/validation/validateLoginBody.ts.js";
+import { authenticateUser } from "../middleware/authenticate.js";
 
 export const userRouter = express.Router();
 
@@ -31,13 +36,13 @@ userRouter.get(
 
 userRouter.post(
   "/users",
-  validateEmail,
-  validatePassword,
+  validateRegisterEmail,
+  validateRegisterPassword,
   checkValidation,
   createUserController
 );
 
-//TODO : need updating after login route
+//  TODO: should add validation if user already has bookmark
 userRouter.patch(
   "/users/add-bookmark",
   validateUserId,
@@ -46,6 +51,7 @@ userRouter.patch(
   addBookmarkController
 );
 
+//  TODO: should add validation if user already has bookmark
 userRouter.patch(
   "/users/remove-bookmark",
   validateUserId,
@@ -54,4 +60,11 @@ userRouter.patch(
   removeBookmarkController
 );
 
-userRouter.post("/login", loginController);
+userRouter.post(
+  "/login",
+  validateLoginEmail,
+  validateLoginPassword,
+  checkValidation,
+  authenticateUser,
+  loginController
+);

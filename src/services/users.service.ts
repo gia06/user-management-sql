@@ -2,13 +2,12 @@ import { AppDataSource } from "../db/data-source.ts.js";
 import { User } from "../db/entities/user.entity.js";
 import { logger } from "../logger/logger.js";
 import { LoginBody, RegisterBody } from "../types/requestBody.type.js";
-import { LoginResult } from "../types/service.type.js";
 import { UserType } from "../types/user.type.js";
 import { hashPassword } from "../utils/passwordHash.js";
 import { findBookmarkById } from "./bookmark.service.js";
 
-export const getUsers = async (): Promise<UserType[]> => {
-  const users: UserType[] = await AppDataSource.getRepository(User).find();
+export const getUsers = async (): Promise<User[]> => {
+  const users: User[] = await AppDataSource.getRepository(User).find();
   logger.info(users, "stored users");
   return users;
 };
@@ -21,9 +20,7 @@ export const findUserById = async (id: string): Promise<User> => {
   return user;
 };
 
-export const findUserByEmail = async (
-  email: string
-): Promise<UserType | null> => {
+export const findUserByEmail = async (email: string): Promise<User | null> => {
   return await AppDataSource.getRepository(User).findOneBy({ email });
 };
 
@@ -32,7 +29,7 @@ export const createUser = async ({
   password,
   firstName,
   lastName,
-}: RegisterBody): Promise<UserType> => {
+}: RegisterBody): Promise<User> => {
   const user = new User();
   const { hash, salt } = await hashPassword(password);
 
@@ -56,9 +53,8 @@ export const addBookmark = async (
 
   storedUser.bookmarks.push(storedBookmark);
 
+  // * only saving user because of cascading *
   await userRepository.save(storedUser);
-
-  console.log(storedUser, storedBookmark);
 };
 
 export const removeBookmark = async (
@@ -73,19 +69,25 @@ export const removeBookmark = async (
     (bookmark) => bookmark.id !== storedBookmark.id
   );
 
+  // * only saving user because of cascading *
   await userRepository.save(storedUser);
 };
 
 export const authService = async ({
   email,
   password,
-}: LoginBody): Promise<LoginResult> => {
-  const user = await findUserByEmail(email);
-  const { hash } = await hashPassword(password, user.salt);
+}: LoginBody): Promise<User | null> => {
+  try {
+    const user = await findUserByEmail(email);
+    const { hash } = await hashPassword(password, user.salt);
 
-  if (hash !== user.password) return { isAuthenticated: false };
+    if (hash !== user.password) return null;
 
-  return { isAuthenticated: true };
+    return user;
+  } catch (err) {
+    logger.info(err);
+    return null;
+  }
 };
 
-const loginService = () => {};
+export const loginService = () => {};
