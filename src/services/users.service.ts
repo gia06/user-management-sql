@@ -7,7 +7,7 @@ import { hashPassword } from "../utils/passwordHash.js";
 import { findBookmarkById } from "./bookmark.service.js";
 
 export const getUsers = async (): Promise<User[]> => {
-  const users: User[] = await AppDataSource.getRepository(User).find({
+  const users = await AppDataSource.getRepository(User).find({
     where: { isDeleted: false },
     relations: ["bookmarks"],
   });
@@ -20,7 +20,6 @@ export const findUserById = async (id: string): Promise<User> => {
     where: { id, isDeleted: false },
     relations: ["bookmarks"],
   });
-  console.log(user.bookmarks);
   return user;
 };
 
