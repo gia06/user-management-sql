@@ -20,6 +20,7 @@ export const findUserById = async (id: string): Promise<User> => {
     where: { id, isDeleted: false },
     relations: ["bookmarks"],
   });
+  console.log(user.bookmarks);
   return user;
 };
 

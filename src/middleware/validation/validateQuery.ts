@@ -1,8 +1,18 @@
 import { query } from "express-validator";
-import { bookmarkValidator, userValidator } from "./customValidators.js";
+import {
+  belongsToUserValidator,
+  bookmarkValidator,
+  idValidator,
+} from "./customValidators.js";
 
-export const validateUserId = query("userId").isString().custom(userValidator);
+export const validateUserIdQuery = query("userId")
+  .isString()
+  .custom(idValidator);
 
-export const validateBookmarkId = query("bookmarkId")
+export const validateBookmarkIdQuery = query("bookmarkId")
   .isString()
   .custom(bookmarkValidator);
+
+export const validateBelongsToUser = query("userId").custom(
+  belongsToUserValidator
+);
