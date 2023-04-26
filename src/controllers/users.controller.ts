@@ -27,8 +27,19 @@ export const createUserController = async (req: Request, res: Response) => {
 
 export const addBookmarkController = async (req: Request, res: Response) => {
   const { userId, bookmarkId } = req.query;
-  await addBookmark(userId.toString(), bookmarkId.toString());
-  res.sendStatus;
+  try {
+    await addBookmark(userId.toString(), bookmarkId.toString());
+    res.sendStatus(204);
+  } catch (err) {
+    logger.error(err);
+    res.status(500).json({
+      error: {
+        message: "Failed to update item in database.",
+        details:
+          "There was an error while attempting to store the item in the database. Please try again later.",
+      },
+    });
+  }
 };
 
 export const removeBookmarkController = async (req: Request, res: Response) => {
@@ -37,7 +48,7 @@ export const removeBookmarkController = async (req: Request, res: Response) => {
     await removeBookmark(userId.toString(), bookmarkId.toString());
     res.sendStatus(204);
   } catch (err) {
-    logger.error(err.message);
+    logger.error(err);
     res.status(500).json({
       error: {
         message: "Failed to update item in database.",

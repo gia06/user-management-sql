@@ -14,16 +14,25 @@ export const registerEmailValidator: CustomValidator = async (
   if (user) return Promise.reject("E-mail already in use");
 };
 
-export const userValidator: CustomValidator = async (userId: string) => {
-  const user = await findUserById(userId);
-
-  if (!user) return Promise.reject("User with this id doesn't exist");
-};
-
 export const bookmarkValidator: CustomValidator = async (
   bookmarkIid: string
 ) => {
   const bookmark = await findBookmarkById(bookmarkIid);
 
   if (!bookmark) return Promise.reject("Bookmark with this id doesn't exist");
+};
+
+export const belongsToUserValidator: CustomValidator = async (
+  value,
+  { req }
+) => {
+  const { userId, bookmarkId } = req.query;
+
+  const user = await findUserById(userId);
+  const bookmark = await findBookmarkById(bookmarkId);
+
+  user.bookmarks.map((userBookmark) => {
+    if (userBookmark.id === bookmark.id)
+      throw new Error("This item is already bookmarked");
+  });
 };

@@ -8,3 +8,7 @@ export const validateRegisterEmail = body("email")
 export const validateRegisterPassword = body("password")
   .isLength({ min: 5 })
   .withMessage("must be at least 5 chars long");
+
+export const validateLoginEmail = body("email").isEmail();
+
+export const validateLoginPassword = body("password").isString();

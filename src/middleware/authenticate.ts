@@ -8,7 +8,7 @@ export const authenticateUser = async (
 ) => {
   const user = await authService(req.body);
 
-  if (!user || !user) {
+  if (!user) {
     res
       .status(400)
       .json({ message: "Authentication failed, wrong credentials" });
