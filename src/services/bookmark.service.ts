@@ -3,7 +3,9 @@ import { Bookmark } from "../db/entities/bookmark.entity.js";
 import { BookmarkType } from "../types/bookmark/bookmark.type.js";
 
 export const findBookmarks = async (): Promise<Bookmark[]> => {
-  const bookmarks = await AppDataSource.getRepository(Bookmark).find({
+  const bookmarks: Bookmark[] = await AppDataSource.getRepository(
+    Bookmark
+  ).find({
     where: { isDeleted: false },
     relations: ["users"],
   });
